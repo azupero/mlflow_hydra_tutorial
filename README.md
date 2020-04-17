@@ -1,1 +1,4 @@
 # mlflow_hydra_tutorial
+## 概要
+機械学習の実験管理ツールMLflowとハイパーパラメータをyamlファイルで管理するHydraを組み合わせた
+実験パイプラインを実装してみました
