@@ -1,0 +1,24 @@
+training:
+  experiment_name: tutorial
+  run_name: lgb_1
+  cv: kfold
+  num_fold: 5
+  boosting_type: gbdt
+  objective: regression
+  metric: rmse
+  max_depth: 9
+  num_leaves: 320
+  learning_rate: 0.01
+  lambda_l1: 0.1
+  lambda_l2: 0.05
+  subsample: 0.8689311009914248
+  subsample_freq: 1
+  colsample_bytree: 0.8823710436986966
+  min_child_samples: 15
+  bagging_fraction: 0.95
+  random_state: 1234
+  num_threads: 8
+  num_boost_round: 1000
+  verbose: -1
+  verbose_eval: 100
+  early_stopping_rounds: 100
