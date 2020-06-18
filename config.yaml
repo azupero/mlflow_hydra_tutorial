@@ -1,3 +1,4 @@
+tracking_uri: work/mlruns
 training:
   experiment_name: tutorial
   run_name: lgb_1
