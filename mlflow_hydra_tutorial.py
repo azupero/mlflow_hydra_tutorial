@@ -72,28 +72,26 @@ class LightgbmTrainer():
         cfg_path: path of config.yaml for hydra
         
         '''
-        self.cfg_path = cfg_path
-        # cwd = os.getcwd()
-        # hydra.experimental.initialize(config_dir=cwd) # hydra initialize
-       
-        self.cfg = hydra.experimental.compose(config_file=self.cfg_path) # config.yaml
+        self.cfg_path = cfg_path # config.yamlのpath
+        self.cfg = hydra.experimental.compose(config_file=self.cfg_path)
         
         # 保存先ディレクトリの設定
-        self.tracking_uri = 'file:///Users/azupero/data-science/github/mlflow_hydra_tutorial/work/mlruns'
+        self.tracking_uri = os.path.join(os.getcwd(), self.cfg.tracking_uri)
         mlflow.set_tracking_uri(self.tracking_uri)
         
         # MLflow experiment_nameの設定
         self.experiment_name = self.cfg.training.experiment_name # mlflow experiment name
         mlflow.set_experiment(self.experiment_name)
         
-        # MLflow run_idの取得
+        # MLflow experiment_id, run_nameの設定
         self.tracking = mlflow.tracking.MlflowClient()
+
         experiment = self.tracking.get_experiment_by_name(self.experiment_name)
-        
         self.experiment_id = experiment.experiment_id # mlflow experiment id
-        # self.run_id = self.tracking.create_run(experiment.experiment_id).info.run_id # mlflow run id in experiment id
         
         self.run_name = self.cfg.training.run_name # mlflow run name
+
+        # self.run_id = self.tracking.create_run(experiment.experiment_id).info.run_id
         
     def fit(self, X, y, sample_weight=None, log_model=False):
         '''
