@@ -23,7 +23,6 @@ import os
 from sklearn.datasets import load_boston
 
 sns.set_style('whitegrid')
-# plt.style.context('ggplot')
 hydra.experimental.initialize()
 
 
