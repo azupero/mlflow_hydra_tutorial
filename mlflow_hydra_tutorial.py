@@ -14,7 +14,6 @@ from sklearn.model_selection import KFold, StratifiedKFold, train_test_split
 from sklearn.utils.multiclass import unique_labels
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib import ticker
-import feather
 import mlflow
 import mlflow.lightgbm
 import hydra
@@ -81,9 +80,8 @@ class LightgbmTrainer():
         self.cfg = hydra.experimental.compose(config_file=self.cfg_path) # config.yaml
         
         # 保存先ディレクトリの設定
-        # mlflow.log_artifactがうまくいかない
-#         tracking_uri = '../mlruns'
-#         mlflow.tracking.set_tracking_uri(tracking_uri)
+        self.tracking_uri = 'file:///Users/azupero/data-science/github/mlflow_hydra_tutorial/work/mlruns'
+        mlflow.set_tracking_uri(self.tracking_uri)
         
         # MLflow experiment_nameの設定
         self.experiment_name = self.cfg.training.experiment_name # mlflow experiment name
@@ -94,9 +92,9 @@ class LightgbmTrainer():
         experiment = self.tracking.get_experiment_by_name(self.experiment_name)
         
         self.experiment_id = experiment.experiment_id # mlflow experiment id
-        self.run_id = self.tracking.create_run(experiment.experiment_id).info.run_id # mlflow run id in experiment id
+        # self.run_id = self.tracking.create_run(experiment.experiment_id).info.run_id # mlflow run id in experiment id
         
-#         self.run_name = self.cfg.training.run_name # mlflow run name # run_idを指定すると設定できない
+        self.run_name = self.cfg.training.run_name # mlflow run name
         
     def fit(self, X, y, sample_weight=None, log_model=False):
         '''
@@ -134,7 +132,7 @@ class LightgbmTrainer():
             self.cv_splitter = self.cv.split(self.X_train, self.y_train)
         
         # training
-        with mlflow.start_run(run_id=self.run_id, experiment_id=self.experiment_id):
+        with mlflow.start_run(run_name=self.run_name, experiment_id=self.experiment_id):
             for fold, (train_idx, valid_idx) in enumerate(self.cv_splitter):
                 print('Cross Validation : {} Fold'.format(fold + 1))
 
@@ -218,8 +216,8 @@ class LightgbmTrainer():
             if log_model:
                 for i in range(self.cfg.training.num_fold):
                     mlflow.lightgbm.log_model(self.models[i], 'lgb_model_{}'.format(i))
-            
-            return self.y_oof
+  
+        return self.y_oof
         
     def predict(self, X, y=None):
         # test set
@@ -466,12 +464,11 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=0)
     
     # training
-    cfg_path = './config.yaml'
+    cfg_path = 'config.yaml'
     trainer = LightgbmTrainer(cfg_path)
     y_oof = trainer.fit(X=X_train, y=y_train, log_model=True)
-
     # inference
-    y_pred = trainer.predict(X_test, y_test)
+    # y_pred = trainer.predict(X_test, y_test)
 
 if __name__ == '__main__':
     main()

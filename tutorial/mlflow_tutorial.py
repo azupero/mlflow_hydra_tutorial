@@ -14,6 +14,7 @@ hydra.experimental.initialize()
 cfg = hydra.experimental.compose(config_file="config.yaml")
 
 experiment_name = cfg.training.experiment_name
+mlflow.set_tracking_uri('../work/mlruns')
 mlflow.set_experiment(experiment_name)
 tracking = mlflow.tracking.MlflowClient()
 experiment = tracking.get_experiment_by_name(experiment_name)
